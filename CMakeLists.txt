@@ -12,7 +12,7 @@ endif()
 project(c_ex C CXX)
 
 set(project_sources
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/libc_ex.c)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/libgcc_ngage.c)
 
 set(GCC_COMN_DEFS -D__SYMBIAN32__ -D__GCC32__ -D__EPOC32__ -D__MARM__ -D__MARM_ARMI__)
 set(GCC_MODE_DEFS -DNDEBUG -D_UNICODE)
