@@ -18,17 +18,17 @@ set(GCC_COMN_DEFS -D__SYMBIAN32__ -D__GCC32__ -D__EPOC32__ -D__MARM__ -D__MARM_A
 set(GCC_MODE_DEFS -DNDEBUG -D_UNICODE)
 set(GCC_DEFS ${GCC_COMN_DEFS} ${GCC_MODE_DEFS})
 
-set(c_ex_libs
+set(gcc_ngage_libs
     ${EPOC_PLATFORM}/gcc/lib/gcc-lib/arm-epoc-pe/2.9-psion-98r2/libgcc.a)
 
-add_library(c_ex STATIC ${project_sources})
+add_library(gcc_ngage STATIC ${project_sources})
 
 target_compile_definitions(
-    c_ex
+    gcc_ngage
     PUBLIC
     ${GCC_DEFS})
 
 target_compile_options(
-    c_ex
+    gcc_ngage
     PUBLIC
     -O2)
