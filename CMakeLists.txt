@@ -9,7 +9,7 @@ else()
     message(FATAL_ERROR "The environment variable NGAGESDK needs to be defined.")
 endif()
 
-project(c_ex C CXX)
+project(gcc_ngage C CXX)
 
 set(project_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/src/libgcc_ngage.c)
