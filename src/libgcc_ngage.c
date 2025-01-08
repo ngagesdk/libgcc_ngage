@@ -39,67 +39,87 @@ double __floatundidf(unsigned long long x)
 {
     if (x == 0) return 0.0;
 
-    unsigned int high = x >> 32;
-    unsigned int low = x & 0xFFFFFFFF;
-    double result = 0.0;
-
-    // Construct double from high and low manually.
-    while (high > 0)
+    int shift = 0;
+    while ((x & 0x8000000000000000ULL) == 0)
     {
-        result += 4294967296.0; // Add 2^32.
-        high--;
+        x <<= 1;
+        shift++;
     }
 
-    while (low > 0)
-    {
-        result += 1.0; // Add 1 for each unit in low.
-        low--;
-    }
+    unsigned long long mantissa = (x & 0x7FFFFFFFFFFFFFFFULL) >> 11;
+    int exponent = 1023 + 63 - shift;
 
-    return result;
+    union
+    {
+        double d;
+        unsigned long long i;
+
+    } result;
+
+    result.i = ((unsigned long long)exponent << 52) | mantissa;
+    return result.d;
 }
 
 // Convert unsigned int to double.
 double __floatunsidf(unsigned int x)
 {
     if (x == 0) return 0.0;
-    double result = 0.0;
 
-    // Construct double from unsigned integer manually.
-    while (x > 0)
+    int shift = 0;
+    while ((x & 0x80000000U) == 0)
     {
-        result += 1.0;
-        x--;
+        x <<= 1;
+        shift++;
     }
 
-    return result;
+    unsigned long long mantissa = (unsigned long long)(x & 0x7FFFFFFFU) << 21;
+    int exponent = 1023 + 31 - shift;
+
+    union
+    {
+        double d;
+        unsigned long long i;
+
+    } result;
+
+    result.i = ((unsigned long long)exponent << 52) | mantissa;
+    return result.d;
 }
 
 // Convert unsigned int to float.
 float __floatunsisf(unsigned int x)
 {
     if (x == 0) return 0.0f;
-    float result = 0.0f;
 
-    // Construct float from unsigned integer manually.
-    while (x > 0)
+    int shift = 0;
+    while ((x & 0x80000000U) == 0)
     {
-        result += 1.0f;
-        x--;
+        x <<= 1;
+        shift++;
     }
 
-    return result;
+    unsigned int mantissa = (x & 0x7FFFFFFFU) >> 8;
+    int exponent = 127 + 31 - shift;
+
+    union
+    {
+        float f;
+        unsigned int i;
+
+    } result;
+
+    result.i = ((unsigned int)exponent << 23) | mantissa;
+    return result.f;
 }
 
 // Check unordered for double precision.
 int __unorddf2(double a, double b)
 {
-    // Software implementation to check for NaN.
     union { double f; unsigned long long i; } ua = { .f = a }, ub = { .f = b };
     unsigned long long abs_a = ua.i & 0x7FFFFFFFFFFFFFFF; // Clear sign bit.
     unsigned long long abs_b = ub.i & 0x7FFFFFFFFFFFFFFF; // Clear sign bit.
 
-    if ((abs_a > 0x7FF0000000000000) || (abs_b > 0x7FF0000000000000))
+    if ((abs_a >= 0x7FF0000000000001) || (abs_b >= 0x7FF0000000000001))
     {
         return 1; // Unordered.
     }
