@@ -86,6 +86,35 @@ double __floatunsidf(unsigned int x)
     return result.d;
 }
 
+// Convert unsigned 64-bit int to float.
+float __floatundisf(unsigned long long x)
+{
+    if (x == 0)
+    {
+        return 0.0f;
+    }
+
+    int shift = 0;
+    while ((x & 0x8000000000000000ULL) == 0)
+    {
+        x <<= 1;
+        shift++;
+    }
+
+    unsigned long long mantissa = (x & 0x7FFFFFFFFFFFFFFFULL) >> 40;
+    int exponent = 127 + 63 - shift;
+
+    union
+    {
+        float f;
+        unsigned int i;
+
+    } result;
+
+    result.i = ((unsigned int)exponent << 23) | (unsigned int)mantissa;
+    return result.f;
+}
+
 // Convert unsigned int to float.
 float __floatunsisf(unsigned int x)
 {
